@@ -1,29 +1,29 @@
 use hyper::{Client, Uri};
+use tokio::fs;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("Hello, world!");
+    println!("Main screen turn on.");
 
     let client = Client::new();
 
     let ip_fut = async {
         let resp = client
             .get(Uri::from_static("http://httpbin.org/ip"))
-            .await?;
-        let ok = hyper::body::to_bytes(resp.into_body()).await;
-        println!("Finished ip!");
-        ok
+            .await
+            .unwrap();
+        let body = hyper::body::to_bytes(resp.into_body()).await.unwrap();
+        fs::write("ip.txt", body).await
     };
     let headers_fut = async {
         let resp = client
             .get(Uri::from_static("http://httpbin.org/headers"))
-            .await?;
-        let ok = hyper::body::to_bytes(resp.into_body()).await;
-        println!("Finished headers!");
-        ok
+            .await
+            .unwrap();
+        let body = hyper::body::to_bytes(resp.into_body()).await.unwrap();
+        fs::write("headers.txt", body).await
     };
 
-    // Wait on both them at the same time:
     let (ip, headers) = futures::try_join!(ip_fut, headers_fut)?;
     println!("{:?} and {:?}", ip, headers);
     Ok(())
