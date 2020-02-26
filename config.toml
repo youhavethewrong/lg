@@ -5,3 +5,15 @@ filename = 'ip.txt'
 [[targets]]
 url = 'http://httpbin.org/headers'
 filename = 'headers.txt'
+
+[[targets]]
+url = 'http://httpbin.org/user-agent'
+filename = 'agent.txt'
+
+[[targets]]
+url = 'http://httpbin.org/status/200'
+filename = '200.txt'
+
+[[targets]]
+url = 'http://httpbin.org/status/201'
+filename = '201.txt'
