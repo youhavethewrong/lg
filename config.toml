@@ -1,0 +1,7 @@
+[[targets]]
+url = 'http://httpbin.org/ip'
+filename = 'ip.txt'
+
+[[targets]]
+url = 'http://httpbin.org/headers'
+filename = 'headers.txt'
