@@ -1,19 +1,23 @@
 [[targets]]
-url = 'http://httpbin.org/ip'
-filename = 'ip.txt'
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_Intro_300k.mp4'
+filename = 'calc-intro.mp4'
 
 [[targets]]
-url = 'http://httpbin.org/headers'
-filename = 'headers.txt'
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_BigPictureCalculus_300k.mp4'
+filename = 'big-pic-of-calc.mp4'
 
 [[targets]]
-url = 'http://httpbin.org/user-agent'
-filename = 'agent.txt'
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_BigPictureDerivatives_300k.mp4'
+filename = 'big-pic-of-derivatives.mp4'
 
 [[targets]]
-url = 'http://httpbin.org/status/200'
-filename = '200.txt'
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_MaxMin_300k.mp4'
+filename = 'max-min-second-derivative.mp4'
 
 [[targets]]
-url = 'http://httpbin.org/status/201'
-filename = '201.txt'
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_ExponentialFunction_300k.mp4'
+filename = 'exponential-func.mp4'
+
+[[targets]]
+url = 'https://archive.org/download/MITRES18.005/MITRES18_005S10_BigPictureIntegrals_300k.mp4'
+filename = 'big-pic-integrals.mp4'
