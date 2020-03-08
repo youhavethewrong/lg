@@ -19,14 +19,14 @@ struct Targets {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     println!("Main screen turn on.");
 
     let config_path = "config.toml";
-    let mut config_file = File::open(config_path).unwrap();
+    let mut config_file = File::open(config_path)?;
     let mut config_buffer = String::new();
-    config_file.read_to_string(&mut config_buffer).unwrap();
-    let decoded: Targets = toml::from_str(&config_buffer).unwrap();
+    config_file.read_to_string(&mut config_buffer)?;
+    let decoded: Targets = toml::from_str(&config_buffer)?;
     let targets = decoded.targets;
     println!("Fetching {} targets.", targets.len());
     let target_stream = stream::iter(targets);
@@ -54,7 +54,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 fs::write(&target.filename, body).await.unwrap();
                 println!("Wrote {}.", target.filename);
             }
-            _ => println!("Something weird"),
+            other => println!(
+                "Unable to retrieve '{}' because status code was '{:?}'.",
+                target.url, other
+            ),
         }
     });
 
