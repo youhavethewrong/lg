@@ -1,3 +1,19 @@
 [[targets]]
-url = 'https://example.com/tacos'
+url = 'https://httpbin.org/404'
 filename = '404.txt'
+
+[[targets]]
+url = 'https://httpbin.org/200'
+filename = '200.txt'
+
+[[targets]]
+url = 'https://httpbin.org/delay/4'
+filename = '4.txt'
+
+[[targets]]
+url = 'https://httpbin.org/drip'
+filename = 'drip.txt'
+
+[[targets]]
+url = 'https://httpbin.org/ip'
+filename = 'ip.txt'
