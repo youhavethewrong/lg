@@ -37,7 +37,7 @@ struct Targets {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let start = std::time::Instant::now();
-    let (tx, mut rx) = sync::mpsc::channel(100);
+    let (tx, rx) = sync::mpsc::channel(100);
 
     tokio::spawn(
         display::Monitor {

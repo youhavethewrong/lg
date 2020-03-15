@@ -1,7 +1,9 @@
-use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::terminal::{
+    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
+};
 use crossterm::ExecutableCommand;
 use std::collections::HashMap;
-use std::io;
+use std::io::stdout;
 use tokio::sync::mpsc::error::TryRecvError;
 use tui::backend::CrosstermBackend;
 use tui::layout::{Constraint, Direction, Layout};
@@ -21,14 +23,13 @@ impl Monitor {
     pub async fn monitor(
         mut self,
     ) -> Result<Vec<anyhow::Result<RequestResult>>, crossterm::ErrorKind> {
-        crossterm::terminal::enable_raw_mode()?;
-        let mut stdout = io::stdout();
-        stdout.execute(crossterm::terminal::EnterAlternateScreen)?;
+        enable_raw_mode()?;
+        std::io::stdout().execute(EnterAlternateScreen)?;
 
-        let backend = CrosstermBackend::new(stdout);
+        let backend = CrosstermBackend::new(stdout());
         let mut terminal = Terminal::new(backend)?;
-        terminal.clear()?;
         terminal.hide_cursor()?;
+        terminal.clear()?;
 
         let mut all: Vec<anyhow::Result<RequestResult>> = Vec::new();
         let mut status_dist: HashMap<hyper::StatusCode, usize> = HashMap::new();
@@ -71,27 +72,10 @@ impl Monitor {
                     f.render(&mut gauge, chunks[0]);
                 })
                 .unwrap();
-
-            while crossterm::event::poll(std::time::Duration::from_secs(0))? {
-                match crossterm::event::read()? {
-                    Event::Key(KeyEvent {
-                        code: KeyCode::Char('q'),
-                        ..
-                    }) => {
-                        crossterm::terminal::disable_raw_mode()?;
-                        std::io::stdout().execute(crossterm::terminal::LeaveAlternateScreen)?;
-                        terminal.show_cursor()?;
-                        std::process::exit(0);
-                    }
-                    _ => (),
-                }
-            }
-
-            tokio::time::delay_for(std::time::Duration::from_secs(1) / self.fps as u32).await;
         }
 
-        crossterm::terminal::disable_raw_mode()?;
-        std::io::stdout().execute(crossterm::terminal::LeaveAlternateScreen)?;
+        disable_raw_mode()?;
+        std::io::stdout().execute(LeaveAlternateScreen)?;
         terminal.show_cursor()?;
         Ok(all)
     }
