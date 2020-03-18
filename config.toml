@@ -3,6 +3,10 @@ url = 'https://httpbin.org/404'
 filename = '404.txt'
 
 [[targets]]
+url = 'https://httpbin.org/401'
+filename = '401.txt'
+
+[[targets]]
 url = 'https://httpbin.org/200'
 filename = '200.txt'
 

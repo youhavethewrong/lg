@@ -90,7 +90,7 @@ async fn main() -> anyhow::Result<()> {
                     fs::write(&target.filename, body).await.unwrap();
                     txer.send(Ok(r)).await.unwrap()
                 }
-                other => txer.send(Err(anyhow::Error::msg(other))).await.unwrap(),
+                _ => txer.send(Ok(r)).await.unwrap(),
             }
         });
 

@@ -4,8 +4,8 @@ use termion::{event::Key, input::MouseTerminal, raw::IntoRawMode, screen::Altern
 use tokio::sync::mpsc::error::TryRecvError;
 use tui::backend::TermionBackend;
 use tui::layout::{Constraint, Direction, Layout};
-use tui::style::{Color, Style};
-use tui::widgets::{Block, Borders, Gauge};
+use tui::style::{Color, Modifier, Style};
+use tui::widgets::{Block, Borders, Gauge, List, Text};
 use tui::Terminal;
 
 use crate::RequestResult;
@@ -49,23 +49,20 @@ impl Monitor {
                 .draw(|mut f| {
                     let chunks = Layout::default()
                         .direction(Direction::Vertical)
-                        .constraints(
-                            [
-                                Constraint::Length(3),
-                                Constraint::Length(7),
-                                Constraint::Percentage(40),
-                            ]
-                            .as_ref(),
-                        )
+                        .margin(2)
+                        .constraints([Constraint::Percentage(100)].as_ref())
                         .split(f.size());
 
-                    let mut gauge = Gauge::default()
-                        .block(Block::default().title("Progress").borders(Borders::ALL))
-                        .style(Style::default().fg(Color::Black).bg(Color::Green))
-                        .ratio(all.len() as f64 / 5 as f64);
-                    f.render(&mut gauge, chunks[0]);
+                    let tasks = status_dist
+                        .iter()
+                        .map(|(status, _count)| Text::raw(format!("{}", status)));
+                    let mut task_list = List::new(tasks)
+                        .block(Block::default().borders(Borders::ALL).title("List"));
+                    f.render(&mut task_list, chunks[0]);
                 })
                 .unwrap();
+
+            // maybe just keep looping until Event::Input matches Key::Char('q')
         }
 
         Ok(all)
