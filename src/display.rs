@@ -1,11 +1,8 @@
-use crossterm::terminal::{
-    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
-};
-use crossterm::ExecutableCommand;
 use std::collections::HashMap;
-use std::io::stdout;
+use std::io::{stdout, Error};
+use termion::{event::Key, input::MouseTerminal, raw::IntoRawMode, screen::AlternateScreen};
 use tokio::sync::mpsc::error::TryRecvError;
-use tui::backend::CrosstermBackend;
+use tui::backend::TermionBackend;
 use tui::layout::{Constraint, Direction, Layout};
 use tui::style::{Color, Style};
 use tui::widgets::{Block, Borders, Gauge};
@@ -20,16 +17,13 @@ pub struct Monitor {
 }
 
 impl Monitor {
-    pub async fn monitor(
-        mut self,
-    ) -> Result<Vec<anyhow::Result<RequestResult>>, crossterm::ErrorKind> {
-        enable_raw_mode()?;
-        std::io::stdout().execute(EnterAlternateScreen)?;
-
-        let backend = CrosstermBackend::new(stdout());
+    pub async fn monitor(mut self) -> Result<Vec<anyhow::Result<RequestResult>>, Error> {
+        let stdout = stdout().into_raw_mode()?;
+        let stdout = MouseTerminal::from(stdout);
+        let stdout = AlternateScreen::from(stdout);
+        let backend = TermionBackend::new(stdout);
         let mut terminal = Terminal::new(backend)?;
         terminal.hide_cursor()?;
-        terminal.clear()?;
 
         let mut all: Vec<anyhow::Result<RequestResult>> = Vec::new();
         let mut status_dist: HashMap<hyper::StatusCode, usize> = HashMap::new();
@@ -67,16 +61,13 @@ impl Monitor {
 
                     let mut gauge = Gauge::default()
                         .block(Block::default().title("Progress").borders(Borders::ALL))
-                        .style(Style::default().fg(Color::White))
+                        .style(Style::default().fg(Color::Black).bg(Color::Green))
                         .ratio(all.len() as f64 / 5 as f64);
                     f.render(&mut gauge, chunks[0]);
                 })
                 .unwrap();
         }
 
-        disable_raw_mode()?;
-        std::io::stdout().execute(LeaveAlternateScreen)?;
-        terminal.show_cursor()?;
         Ok(all)
     }
 }
