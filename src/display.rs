@@ -55,7 +55,7 @@ impl Monitor {
 
                     let tasks = status_dist
                         .iter()
-                        .map(|(status, _count)| Text::raw(format!("{}", status)));
+                        .map(|(status, count)| Text::raw(format!("{} - {}", status, count)));
                     let mut task_list = List::new(tasks)
                         .block(Block::default().borders(Borders::ALL).title("List"));
                     f.render(&mut task_list, chunks[0]);
